@@ -1,0 +1,72 @@
+name: Yearly Learning Roadmap
+
+on:
+  schedule:
+    - cron: "0 9 1 * *" # 1 число каждого месяца в 09:00 UTC
+  workflow_dispatch:
+
+jobs:
+  create-monthly-plan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Month Variable
+        run: echo "MONTH=$(date +'%m')" >> $GITHUB_ENV
+
+      - name: Generate Monthly Plan
+        run: |
+          case "$MONTH" in
+            "01")
+              cat > plan.md <<'EOL'
+## Январь — Старт и базовая настройка
+
+### C++
+- [ ] Настроить окружение (GCC/Clang/MSVC, CMake, clang-format, clang-tidy)
+- [ ] Написать первую CLI-утилиту (парсер CSV) с тестами (GoogleTest/Catch2)
+
+### Python
+- [ ] Установить Python 3.12+, Poetry, Ruff, Black, mypy, pytest
+- [ ] Написать Telegram-бота с приветственным сообщением (aiogram)
+EOL
+              ;;
+            "02")
+              cat > plan.md <<'EOL'
+## Февраль — Основы и инструменты
+
+### C++
+- [ ] Изучить умные указатели, RAII, std::vector/string, исключения
+- [ ] Подключить CI с ASan/UBSan, тесты в GitHub Actions
+
+### Python
+- [ ] Добавить в бота команды /help, /time, /todo
+- [ ] Настроить хранение данных бота (SQLite через SQLAlchemy)
+EOL
+              ;;
+            # ... остальные месяцы по аналогии ...
+          esac
+
+      - name: Create Monthly Issue
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: "Месячный план — $(date +'%B %Y')"
+          content-filepath: plan.md
+          labels: roadmap
+
+  check-progress:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Install jq
+        run: sudo apt-get install jq
+
+      - name: Fetch Open Issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          issues=$(gh api repos/${{ github.repository }}/issues --jq '.[] | select(.state=="open" and (.title | contains("Месячный план"))) | .number')
+          for issue in $issues; do
+            body=$(gh api repos/${{ github.repository }}/issues/$issue --jq '.body')
+            incomplete=$(echo "$body" | grep "\- \[ \]" | wc -l)
+            if [ "$incomplete" -gt 0 ]; then
+              gh issue comment $issue --body "⚠️ Напоминание: у вас осталось $incomplete невыполненных задач в этом месяце."
+            fi
+          done
