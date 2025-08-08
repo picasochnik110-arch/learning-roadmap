@@ -2,71 +2,95 @@ name: Yearly Learning Roadmap
 
 on:
   schedule:
-    - cron: "0 9 1 * *" # 1 число каждого месяца в 09:00 UTC
-  workflow_dispatch:
+    # Запускаем 1-го числа каждого месяца в 09:00 UTC
+    - cron: "0 9 1 * *"
+  workflow_dispatch: # запуск вручную при желании
 
 jobs:
-  create-monthly-plan:
+  roadmap:
     runs-on: ubuntu-latest
     steps:
       - name: Set Month Variable
+        id: date
         run: echo "MONTH=$(date +'%m')" >> $GITHUB_ENV
 
-      - name: Generate Monthly Plan
+      - name: Monthly Plan
         run: |
           case "$MONTH" in
             "01")
-              cat > plan.md <<'EOL'
-## Январь — Старт и базовая настройка
-
-### C++
-- [ ] Настроить окружение (GCC/Clang/MSVC, CMake, clang-format, clang-tidy)
-- [ ] Написать первую CLI-утилиту (парсер CSV) с тестами (GoogleTest/Catch2)
-
-### Python
-- [ ] Установить Python 3.12+, Poetry, Ruff, Black, mypy, pytest
-- [ ] Написать Telegram-бота с приветственным сообщением (aiogram)
-EOL
+              echo "## Январь — Старт и базовая настройка" > plan.md
+              echo "- C++: Настроить окружение (GCC/Clang/MSVC, CMake, clang-format, clang-tidy)" >> plan.md
+              echo "- C++: Написать первую CLI-утилиту (парсер CSV) с тестами (GoogleTest/Catch2)" >> plan.md
+              echo "- Python: Установить Python 3.12+, Poetry, Ruff, Black, mypy, pytest" >> plan.md
+              echo "- Python: Написать Telegram-бота с приветственным сообщением (aiogram)" >> plan.md
               ;;
             "02")
-              cat > plan.md <<'EOL'
-## Февраль — Основы и инструменты
-
-### C++
-- [ ] Изучить умные указатели, RAII, std::vector/string, исключения
-- [ ] Подключить CI с ASan/UBSan, тесты в GitHub Actions
-
-### Python
-- [ ] Добавить в бота команды /help, /time, /todo
-- [ ] Настроить хранение данных бота (SQLite через SQLAlchemy)
-EOL
+              echo "## Февраль — Основы и инструменты" > plan.md
+              echo "- C++: Изучить умные указатели, RAII, std::vector/string, исключения" >> plan.md
+              echo "- C++: Подключить CI с ASan/UBSan, тесты в GitHub Actions" >> plan.md
+              echo "- Python: Добавить в бота команды /help, /time, /todo" >> plan.md
+              echo "- Python: Настроить хранение данных бота (SQLite через SQLAlchemy)" >> plan.md
               ;;
-            # ... остальные месяцы по аналогии ...
+            "03")
+              echo "## Март — Первый рабочий проект" > plan.md
+              echo "- C++: Реализовать модуль для десктопного приложения (парсер конфигураций)" >> plan.md
+              echo "- C++: Добавить профилирование и оптимизацию горячих функций" >> plan.md
+              echo "- Python: Добавить автоматизацию тайм-менеджмента (скрипт напоминаний с cron)" >> plan.md
+              ;;
+            "04")
+              echo "## Апрель — Расширение возможностей" > plan.md
+              echo "- C++: Освоить std::ranges и move-семантику" >> plan.md
+              echo "- C++: Интегрировать Conan/vcpkg для зависимостей" >> plan.md
+              echo "- Python: Добавить асинхронность в бота (aiogram asyncio)" >> plan.md
+              echo "- Python: Создать модуль автоматизации для сортировки и архивации файлов" >> plan.md
+              ;;
+            "05")
+              echo "## Май — Работа с потоками" > plan.md
+              echo "- C++: Освоить std::thread, thread pool, mutex, future/async" >> plan.md
+              echo "- C++: Реализовать многопоточный модуль для приложения" >> plan.md
+              echo "- Python: Автоматизировать загрузку/бэкап данных в Google Drive/Yandex.Disk" >> plan.md
+              ;;
+            "06")
+              echo "## Июнь — Оптимизация кода" > plan.md
+              echo "- C++: Изучить constexpr, оптимизацию через профилировщик" >> plan.md
+              echo "- C++: Добавить статический анализ в CI (clang-tidy)" >> plan.md
+              echo "- Python: Оптимизировать бота, внедрить кэширование (aiocache)" >> plan.md
+              ;;
+            "07")
+              echo "## Июль — Мини-проект" > plan.md
+              echo "- C++: Создать отдельную библиотеку (например, утилиты для парсинга/логирования)" >> plan.md
+              echo "- Python: Написать второго бота — автоматизация личных заметок и синхронизации с Google Sheets" >> plan.md
+              ;;
+            "08")
+              echo "## Август — Подготовка к публикации" > plan.md
+              echo "- C++: Задокументировать библиотеку, выложить в публичный репозиторий" >> plan.md
+              echo "- Python: Опубликовать pip-пакет (Poetry → PyPI)" >> plan.md
+              ;;
+            "09")
+              echo "## Сентябрь — Архитектура" > plan.md
+              echo "- C++: Изучить модульность (C++20 modules), стабильность API/ABI" >> plan.md
+              echo "- Python: Разделить код бота на модули, улучшить тестирование" >> plan.md
+              ;;
+            "10")
+              echo "## Октябрь — Продвинутая работа с памятью" > plan.md
+              echo "- C++: Lock-free структуры, атомарные операции" >> plan.md
+              echo "- Python: Добавить интеграцию бота с внешними API (например, Trello/Jira)" >> plan.md
+              ;;
+            "11")
+              echo "## Ноябрь — Финализация проектов" > plan.md
+              echo "- C++: Завершить библиотеку, подготовить релиз" >> plan.md
+              echo "- Python: Запустить финальную версию бота с автодеплоем (Docker + CI/CD)" >> plan.md
+              ;;
+            "12")
+              echo "## Декабрь — Итоги года" > plan.md
+              echo "- Подготовить портфолио проектов (C++ и Python)" >> plan.md
+              echo "- Опубликовать результаты на GitHub + LinkedIn" >> plan.md
+              ;;
           esac
 
-      - name: Create Monthly Issue
+      - name: Create GitHub Issue for Monthly Plan
         uses: peter-evans/create-issue-from-file@v4
         with:
           title: "Месячный план — $(date +'%B %Y')"
           content-filepath: plan.md
           labels: roadmap
-
-  check-progress:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Install jq
-        run: sudo apt-get install jq
-
-      - name: Fetch Open Issues
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          issues=$(gh api repos/${{ github.repository }}/issues --jq '.[] | select(.state=="open" and (.title | contains("Месячный план"))) | .number')
-          for issue in $issues; do
-            body=$(gh api repos/${{ github.repository }}/issues/$issue --jq '.body')
-            incomplete=$(echo "$body" | grep "\- \[ \]" | wc -l)
-            if [ "$incomplete" -gt 0 ]; then
-              gh issue comment $issue --body "⚠️ Напоминание: у вас осталось $incomplete невыполненных задач в этом месяце."
-            fi
-          done
