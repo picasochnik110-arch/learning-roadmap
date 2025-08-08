@@ -6,6 +6,9 @@ on:
     - cron: "0 9 1 * *"
   workflow_dispatch: # запуск вручную при желании
 
+permissions:
+  issues: write
+
 jobs:
   roadmap:
     runs-on: ubuntu-latest
